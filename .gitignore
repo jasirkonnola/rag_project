@@ -1,0 +1,25 @@
+# Python
+*.pyc
+__pycache__/
+
+# Django
+db.sqlite3
+media/
+static/
+
+# Vector stores
+faiss_index/
+chroma_db_data/
+
+# Virtualenv
+tfenv/
+
+# VSCode
+.vscode/
+
+# Migrations cache
+rag_app/migrations/__pycache__/
+
+# Virtual environment
+tfenv/
+
