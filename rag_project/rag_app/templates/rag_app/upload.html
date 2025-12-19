@@ -1,0 +1,52 @@
+{% extends "rag_app/base.html" %}
+
+{% block content %}
+<h2>Upload PDF</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="pdf" required>
+    <button type="submit">Upload</button>
+</form>
+
+{% if msg %}
+<p class="success">{{ msg }}</p>
+{% endif %}
+
+{% if pdf_name %}
+<p><strong>Processed PDF:</strong> {{ pdf_name }}</p>
+{% endif %}
+
+<hr>
+
+<h2>Ask Question</h2>
+
+<input type="text" id="question" placeholder="Ask something..." class="question-input">
+<button onclick="askQuestion()">Ask</button>
+
+<div class="answer">
+    <strong>Answer:</strong>
+    <p id="answer"></p>
+</div>
+
+<script>
+function askQuestion() {
+    const q = document.getElementById("question").value;
+
+    if (!q) {
+        alert("Please enter a question");
+        return;
+    }
+
+    fetch(`/ask/?q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("answer").innerText =
+                data.answer || "No answer returned";
+        })
+        .catch(() => {
+            document.getElementById("answer").innerText = "Error occurred";
+        });
+}
+</script>
+{% endblock %}

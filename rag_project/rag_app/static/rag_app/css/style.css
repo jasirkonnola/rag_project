@@ -1,0 +1,155 @@
+/* --- Global Reset & Variables --- */
+:root {
+    --primary-color: #4a90e2;
+    --primary-hover: #357abd;
+    --background-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --text-light: #666666;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Navigation --- */
+nav {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; }
+
+/* --- Layout Container --- */
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    flex: 1;
+    width: 100%;
+}
+
+/* --- Headings --- */
+h2, h3 { color: var(--text-color); margin-bottom: 1rem; font-weight: 600; }
+h3 { font-size: 1.25rem; color: var(--text-light); margin-top: 1.5rem; }
+
+/* --- Forms & Inputs --- */
+form {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+form input[type="text"],
+form input[type="file"],
+input#question {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus,
+input#question:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* File input specific styling */
+input[type="file"] { background: #fafafa; cursor: pointer; }
+
+/* --- Buttons --- */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    align-self: flex-start;
+}
+
+button:hover { background-color: var(--primary-hover); }
+button:active { transform: scale(0.98); }
+
+/* Inline ask section */
+#question {
+    width: calc(100% - 120px) !important;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* --- Answer Box --- */
+.answer, #answer {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-left: 5px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-top: 2rem;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.answer strong,
+p strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.answer p, #answer { color: var(--text-color); white-space: pre-wrap; }
+
+/* --- Utility / Messages --- */
+.success {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #c8e6c9;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+hr { border: 0; height: 1px; background: #ddd; margin: 2rem 0; }
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 600px) {
+    .container { padding: 1rem; }
+    form { padding: 1.5rem; }
+    button { width: 100%; }
+    #question { width: 100% !important; margin-bottom: 10px; }
+}
