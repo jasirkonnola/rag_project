@@ -95,23 +95,39 @@ Ensure your project files are organized as follows for imports to work correctly
 
 Plaintext
 
-my_project/
-├── manage.py
-├── db.sqlite3
-├── chroma_db_data/       # Created automatically (stores vector index)
-└── rag_app/              # Your Django App
-    ├── __init__.py
-    ├── views.py          # Main logic (Upload & Chat)
-    ├── models.py         # Database models (UploadedPDF)
-    ├── urls.py           # App URLs
-    ├── templates/        # HTML files
-    └── utils/            # Helper Modules
-        ├── __init__.py
-        ├── llm.py            # ChatOllama setup
-        ├── embedding.py      # HuggingFace Embeddings setup
-        ├── vector_store.py   # ChromaDB logic
-        ├── text_splitter.py  # Chunking logic
-        └── pdf_loader.py     # PDF text extraction
+my_project/                   <-- ROOT FOLDER (Open VS Code here)
+├── manage.py                 <-- Django command tool
+├── db.sqlite3                <-- Database file (created after migrate)
+├── chroma_db_data/           <-- (Auto-created folder for vector storage)
+│
+├── rag_project/              <-- PROJECT CONFIGURATION FOLDER
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py           <-- Add 'rag_app' to INSTALLED_APPS here
+│   ├── urls.py               <-- Include 'rag_app.urls' here
+│   └── wsgi.py
+│
+└── rag_app/                  <-- YOUR APP FOLDER
+    ├── __init__.py           <-- Empty file (Required)
+    ├── admin.py
+    ├── apps.py
+    ├── models.py             <-- Defines UploadedPDF model
+    ├── urls.py               <-- URL patterns for upload/chat
+    ├── views.py              <-- Main logic (Upload, Chat, Summarize)
+    ├── tests.py
+    │
+    ├── templates/            <-- HTML FILES
+    │   └── rag_app/
+    │       └── upload.html
+    │
+    └── utils/                <-- HELPER SCRIPTS
+        ├── __init__.py       <-- Empty file (Required for imports)
+        ├── embedding.py      <-- HuggingFace Setup
+        ├── llm.py            <-- ChatOllama Setup
+        ├── pdf_loader.py     # Extract text from PDF
+        ├── text_splitter.py  # Split text into chunks
+        └── vector_store.py   # ChromaDB logic
+
 ❓ Troubleshooting
 Q: Import "rag_app.utils..." could not be resolved
 
