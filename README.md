@@ -39,11 +39,13 @@ ollama pull llama3.2
 ---
 
 📦 Installation Guide
+
 1. Clone the Repository
 Bash
 
 git clone <your-repo-url>
 cd <your-project-folder>
+
 2. Create a Virtual Environment
 It is recommended to use a virtual environment to manage dependencies.
 
@@ -59,23 +61,28 @@ Bash
 
 python3 -m venv venv
 source venv/bin/activate
+
 3. Install Dependencies
 Install the required Python packages:
 
 Bash
 
 pip install django langchain langchain-community langchain-huggingface langchain-chroma langchain-ollama sentence-transformers pymupdf
+
 4. Database Setup
 Initialize the SQLite database for Django:
 
 Bash
 
 python manage.py migrate
+
 🚀 Usage
+
 1. Start the Server
 Bash
 
 python manage.py runserver
+
 2. Access the App
 Open your web browser and go to: https://www.google.com/search?q=http://127.0.0.1:8000/
 
@@ -128,7 +135,9 @@ my_project/                   <-- ROOT FOLDER (Open VS Code here)
         ├── text_splitter.py  # Split text into chunks
         └── vector_store.py   # ChromaDB logic
 
+
 ❓ Troubleshooting
+
 Q: Import "rag_app.utils..." could not be resolved
 
 A: Ensure you have an empty __init__.py file inside the rag_app folder and the rag_app/utils folder.
