@@ -1,52 +1,197 @@
 {% extends "rag_app/base.html" %}
 
 {% block content %}
-<h2>Upload PDF</h2>
+<aside class="w-80 bg-white border-r border-gray-200 flex flex-col z-0">
+    
+    <div class="p-4 border-b border-gray-200 bg-gray-50/50">
+        <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Add Knowledge</h2>
+        
+        <form method="POST" enctype="multipart/form-data" class="flex flex-col gap-2">
+            {% csrf_token %}
+            <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-white hover:border-indigo-400 transition group">
+                <div class="flex flex-col items-center justify-center pt-2 pb-3">
+                    <i class="fa-solid fa-cloud-arrow-up text-gray-400 group-hover:text-indigo-500 mb-1 transition"></i>
+                    <p class="text-[10px] text-gray-500 uppercase font-medium">Click to upload PDF</p>
+                </div>
+                <input type="file" name="pdfs" multiple required class="hidden" onchange="this.form.submit()">
+            </label>
+        </form>
+        
+        {% if msg %}
+        <div class="mt-2 p-2 bg-green-50 text-green-700 text-[10px] rounded border border-green-200 flex items-center gap-2">
+            <i class="fa-solid fa-check-circle"></i> {{ msg }}
+        </div>
+        {% endif %}
+    </div>
 
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="pdf" required>
-    <button type="submit">Upload</button>
-</form>
+    <div class="flex-1 overflow-y-auto p-4 space-y-6">
+        
+        <div>
+            <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">My Documents</h3>
+            <ul class="space-y-2">
+                {% for pdf in pdfs %}
+                <li class="group flex items-center justify-between p-2.5 bg-white border border-gray-100 rounded-lg hover:border-indigo-200 hover:shadow-sm transition-all">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <i class="fa-regular fa-file-pdf text-red-500 flex-shrink-0"></i>
+                        <span class="text-xs text-gray-700 font-medium truncate" title="{{ pdf.file.name }}">
+                            {{ pdf.file.name }}
+                        </span>
+                    </div>
+                    
+                    <a href="{% url 'delete_pdf' pdf.id %}" 
+   class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition-all"
+   title="Delete">
+    <i class="fa-solid fa-trash-can text-xs"></i>
+</a>
 
-{% if msg %}
-<p class="success">{{ msg }}</p>
-{% endif %}
+                </li>
+                {% empty %}
+                <li class="text-xs text-gray-400 text-center italic py-2 border border-dashed border-gray-200 rounded-lg">
+                    No documents uploaded yet.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
 
-{% if pdf_name %}
-<p><strong>Processed PDF:</strong> {{ pdf_name }}</p>
-{% endif %}
+        <div>
+            <label class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 block">Chat Context</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <i class="fa-solid fa-layer-group text-gray-400 text-xs"></i>
+                </div>
+                <select id="pdfSelect" class="w-full pl-9 p-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block">
+                    <option value="all">📚 All Documents</option>
+                    {% for pdf in pdfs %}
+                    <option value="{{ pdf.id }}">📄 {{ pdf.file.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
 
-<hr>
+        <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+            <h3 class="text-blue-800 font-semibold text-[10px] uppercase mb-1">Quick Tips</h3>
+            <p class="text-blue-600 text-[11px] leading-relaxed">
+                • Use the trash icon to remove old files.<br>
+                • Select "All Documents" to search your entire knowledge base at once.
+            </p>
+        </div>
+    </div>
+</aside>
 
-<h2>Ask Question</h2>
+<main class="flex-1 flex flex-col bg-gray-50 relative">
+    
+    <div id="chat-container" class="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+        <div class="flex gap-4">
+            <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shrink-0">
+                <i class="fa-solid fa-robot text-sm"></i>
+            </div>
+            <div class="bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-2xl text-gray-700 leading-relaxed text-sm">
+                Hello! I'm ready to help. Upload a PDF in the sidebar to get started.
+            </div>
+        </div>
+    </div>
 
-<input type="text" id="question" placeholder="Ask something..." class="question-input">
-<button onclick="askQuestion()">Ask</button>
-
-<div class="answer">
-    <strong>Answer:</strong>
-    <p id="answer"></p>
-</div>
+    <div class="bg-white border-t border-gray-200 p-4">
+        <div class="max-w-4xl mx-auto relative">
+            <input 
+                type="text" 
+                id="question" 
+                class="w-full pl-4 pr-14 py-4 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white shadow-sm transition-all outline-none" 
+                placeholder="Ask a question about your documents..."
+                onkeypress="handleEnter(event)"
+            >
+            <button 
+                onclick="askQuestion()" 
+                class="absolute right-2 top-2 bottom-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg text-sm px-4 py-2 transition shadow-md flex items-center gap-2"
+            >
+                <span>Send</span>
+                <i class="fa-regular fa-paper-plane"></i>
+            </button>
+        </div>
+        <p class="text-center text-[10px] text-gray-400 mt-2">AI responses are generated based on uploaded content.</p>
+    </div>
+</main>
 
 <script>
-function askQuestion() {
-    const q = document.getElementById("question").value;
+    const chatContainer = document.getElementById('chat-container');
+    const questionInput = document.getElementById('question');
 
-    if (!q) {
-        alert("Please enter a question");
-        return;
+    function handleEnter(e) {
+        if (e.key === 'Enter') askQuestion();
     }
 
-    fetch(`/ask/?q=${encodeURIComponent(q)}`)
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById("answer").innerText =
-                data.answer || "No answer returned";
-        })
-        .catch(() => {
-            document.getElementById("answer").innerText = "Error occurred";
-        });
-}
+    function scrollToBottom() {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function createMessageBubble(text, isUser) {
+        const wrapper = document.createElement('div');
+        wrapper.className = isUser ? "flex gap-4 flex-row-reverse animate-fade-in" : "flex gap-4 animate-fade-in";
+        
+        const avatar = document.createElement('div');
+        avatar.className = `w-8 h-8 rounded-full flex items-center justify-center text-white shrink-0 ${isUser ? 'bg-gray-700' : 'bg-indigo-600'}`;
+        avatar.innerHTML = isUser ? '<i class="fa-solid fa-user text-sm"></i>' : '<i class="fa-solid fa-robot text-sm"></i>';
+        
+        const bubble = document.createElement('div');
+        bubble.className = isUser 
+            ? "bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-none shadow-md max-w-2xl leading-relaxed text-sm"
+            : "bg-white border border-gray-200 p-3.5 rounded-2xl rounded-tl-none shadow-sm max-w-2xl text-gray-700 leading-relaxed text-sm";
+        
+        bubble.innerText = text;
+        
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        return wrapper;
+    }
+
+    function createLoadingBubble() {
+        const wrapper = document.createElement('div');
+        wrapper.className = "flex gap-4";
+        wrapper.id = "loading-bubble";
+        
+        const avatar = document.createElement('div');
+        avatar.className = "w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shrink-0";
+        avatar.innerHTML = '<i class="fa-solid fa-robot text-sm"></i>';
+        
+        const bubble = document.createElement('div');
+        bubble.className = "bg-white border border-gray-200 p-4 rounded-2xl rounded-tl-none shadow-sm";
+        bubble.innerHTML = '<div class="flex gap-1"><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div><div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div></div>';
+        
+        wrapper.appendChild(avatar);
+        wrapper.appendChild(bubble);
+        return wrapper;
+    }
+
+    function askQuestion() {
+        const q = questionInput.value.trim();
+        const pdfId = document.getElementById("pdfSelect").value;
+        
+        if (!q) return;
+
+        // 1. Add User Question to Chat
+        chatContainer.appendChild(createMessageBubble(q, true));
+        questionInput.value = "";
+        scrollToBottom();
+
+        // 2. Add Loading Indicator
+        const loader = createLoadingBubble();
+        chatContainer.appendChild(loader);
+        scrollToBottom();
+
+        // 3. Fetch Answer
+        fetch(`/ask/?q=${encodeURIComponent(q)}&pdf_id=${pdfId}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("loading-bubble").remove();
+                const answerText = data.answer || "No answer returned";
+                chatContainer.appendChild(createMessageBubble(answerText, false));
+                scrollToBottom();
+            })
+            .catch(() => {
+                document.getElementById("loading-bubble").remove();
+                chatContainer.appendChild(createMessageBubble("Sorry, an error occurred.", false));
+                scrollToBottom();
+            });
+    }
 </script>
 {% endblock %}

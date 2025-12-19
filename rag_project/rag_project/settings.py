@@ -105,3 +105,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Where FAISS indexes will be stored
+FAISS_INDEX_DIR = BASE_DIR / "faiss_index"

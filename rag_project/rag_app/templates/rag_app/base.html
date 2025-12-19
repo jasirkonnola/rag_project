@@ -3,16 +3,39 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>RAG PDF Chat</title>
+    <title>DocuChat AI</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'rag_app/css/style.css' %}">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Custom Scrollbar for Chat */
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body>
-    <nav>
-        <h2>PDF RAG System</h2>
+<body class="bg-gray-50 h-screen flex flex-col overflow-hidden">
+
+    <nav class="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 shrink-0 z-10">
+        <div class="flex items-center gap-2">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+            <h1 class="text-xl font-bold text-gray-800 tracking-tight">PDF RAG System</h1>
+        </div>
+        <div class="text-sm text-gray-500">
+            Powered by LLMs
+        </div>
     </nav>
-    <div class="container">
+
+    <div class="flex-1 flex overflow-hidden">
         {% block content %}{% endblock %}
     </div>
+
 </body>
 </html>
