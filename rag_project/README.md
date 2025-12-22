@@ -74,7 +74,7 @@ A sophisticated Django-based RAG (Retrieval-Augmented Generation) application th
     *   Click the **Trash icon** to instantly delete a document.
     *   Click **"Clear Conversation"** in the sidebar to reset your chat history.
 
-## 📂 Project Structure
+-- 📂 Project Structure
 
 my_project/                   <-- ROOT FOLDER (Open VS Code here)
 ├── manage.py                 <-- Django command tool
@@ -108,8 +108,3 @@ my_project/                   <-- ROOT FOLDER (Open VS Code here)
         ├── pdf_loader.py     # Extract text from PDF
         ├── text_splitter.py  # Split text into chunks
         └── vector_store.py   # ChromaDB logic
-
-## ⚙️ Configuration
-
-*   **API Keys**: Ensure your LLM API keys (e.g., `GOOGLE_API_KEY`) are set in your environment variables or `.env` file.
-*   **Security**: `settings.py` is configured with `X_FRAME_OPTIONS = 'SAMEORIGIN'` to ensure the PDF viewer works correctly on `localhost`.
