@@ -1,110 +1,151 @@
-# 📚 Django RAG PDF Q&A Project
+# Local PDF RAG with Auto-Summarization 🦙
 
-A simple Retrieval-Augmented Generation (RAG) system built with **Django**, **FAISS**, and **Ollama (LLaMA 3)**.  
-It allows users to upload PDFs, automatically indexes their content into a vector store, and then ask natural language questions about the document.
+A powerful, privacy-focused application that allows you to chat with your PDF documents locally. Built with Django, LangChain, and Ollama, this tool runs entirely on your machine—no data leaves your computer.
 
----
+It features **automatic summarization** upon upload and uses **metadata filtering** to let you query specific documents or your entire library at once.
 
-## 🚀 Features
-- **PDF Ingestion**: Upload PDF files via a simple web interface.
-- **Text Processing**: Automatically extracts text and splits it into manageable chunks.
-- **Vector Storage**: Stores embeddings in a local **FAISS** vector database.
-- **AI Answering**: Uses **Ollama (LLaMA 3)** running locally to generate context-aware answers.
+## ✨ Features
 
----
+* **100% Local Processing:** Uses `Ollama` and open-source embedding models. No API keys required.
+* **Auto-Summarization:** Automatically generates a 3-5 bullet point summary for every PDF uploaded.
+* **Smart Context Retrieval:** Uses `ChromaDB` to store vectors and retrieve the most relevant 6 chunks of text for high-quality answers.
+* **Metadata Filtering:** Chat with a specific PDF or search across "All Documents" simultaneously.
+* **Optimized Performance:** configured for `Llama 3.2` (3B) and `all-MiniLM-L6-v2` for fast CPU inference.
 
 ## 🛠️ Tech Stack
-- **Django 5.x** – Web framework
-- **LangChain** – LLM Orchestration
-- **FAISS** – Vector store for similarity search
-- **HuggingFace Transformers** – Embedding generation
-- **Ollama** – Local LLM runner
-- **PyMuPDF** – PDF parsing
+
+* **Backend Framework:** Django
+* **LLM Orchestration:** LangChain
+* **Local LLM:** Ollama (Llama 3.2)
+* **Vector Database:** ChromaDB
+* **Embeddings:** HuggingFace (`sentence-transformers/all-MiniLM-L6-v2`)
+* **PDF Parsing:** PyMuPDF (Fitz)
 
 ---
 
-## ⚙️ Installation
+## 📋 Prerequisites
 
-### Prerequisites
-Ensure you have **Python 3.10+** and **Ollama** installed on your system.
+Before running the app, ensure you have the following installed:
 
-### 1. Clone the repository
+1.  **Python 3.10+**
+2.  **Ollama:** [Download and install from ollama.com](https://ollama.com/)
+
+### Model Setup
+Open your terminal and pull the optimized model (approx. 2GB):
+
 ```bash
-git clone [https://github.com/your-username/rag_project.git](https://github.com/your-username/rag_project.git)
-cd rag_project
+ollama pull llama3.2
 
-2. Set up Virtual Environment
+---
+
+📦 Installation Guide
+
+1. Clone the Repository
 Bash
 
-# Create virtual environment named 'tfenv'
-python -m venv tfenv
+git clone <your-repo-url>
+cd <your-project-folder>
 
-# Activate on Linux/Mac
-source tfenv/bin/activate
+2. Create a Virtual Environment
+It is recommended to use a virtual environment to manage dependencies.
 
-# Activate on Windows
-tfenv\Scripts\activate
+Windows:
+
+Bash
+
+python -m venv venv
+venv\Scripts\activate
+Mac/Linux:
+
+Bash
+
+python3 -m venv venv
+source venv/bin/activate
 
 3. Install Dependencies
+Install the required Python packages:
+
 Bash
 
-pip install -r requirements.txt
+pip install django langchain langchain-community langchain-huggingface langchain-chroma langchain-ollama sentence-transformers pymupdf
 
-4. Setup Database
+4. Database Setup
+Initialize the SQLite database for Django:
+
 Bash
 
 python manage.py migrate
 
-5. Setup Ollama
-Make sure Ollama is installed and pull the LLaMA 3 model:
+🚀 Usage
 
-Bash
-
-ollama pull llama3
-
-6. Run the Server
+1. Start the Server
 Bash
 
 python manage.py runserver
 
+2. Access the App
+Open your web browser and go to: https://www.google.com/search?q=http://127.0.0.1:8000/
+
+3. Workflow
+Upload: Select one or multiple PDF files. The app will extract text, generate embeddings, and create a summary automatically.
+
+Review: See the auto-generated summary in the file list.
+
+Chat: Type a question in the search bar.
+
+Select "All" to search the whole library.
+
+Select a Specific PDF to narrow down the answer.
+
 📂 Project Structure
-rag_project/
-├── rag_app/
-│   ├── templates/rag_app/
-│   │   ├── base.html
-│   │   └── upload.html
-│   ├── static/rag_app/css/
-│   │   └── style.css
-│   ├── utils/
-│   │   ├── pdf_loader.py
-│   │   ├── text_splitter.py
-│   │   ├── vector_store.py
-│   │   └── embeddings.py
-│   ├── views.py
-│   ├── models.py
-│   └── urls.py
-├── rag_project/
-│   ├── settings.py
-│   ├── urls.py
+Ensure your project files are organized as follows for imports to work correctly:
+
+Plaintext
+
+my_project/                   <-- ROOT FOLDER (Open VS Code here)
+├── manage.py                 <-- Django command tool
+├── db.sqlite3                <-- Database file (created after migrate)
+├── chroma_db_data/           <-- (Auto-created folder for vector storage)
+│
+├── rag_project/              <-- PROJECT CONFIGURATION FOLDER
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py           <-- Add 'rag_app' to INSTALLED_APPS here
+│   ├── urls.py               <-- Include 'rag_app.urls' here
 │   └── wsgi.py
-├── manage.py
-├── requirements.txt
-└── README.md
+│
+└── rag_app/                  <-- YOUR APP FOLDER
+    ├── __init__.py           <-- Empty file (Required)
+    ├── admin.py
+    ├── apps.py
+    ├── models.py             <-- Defines UploadedPDF model
+    ├── urls.py               <-- URL patterns for upload/chat
+    ├── views.py              <-- Main logic (Upload, Chat, Summarize)
+    ├── tests.py
+    │
+    ├── templates/            <-- HTML FILES
+    │   └── rag_app/
+    │       └── upload.html
+    │
+    └── utils/                <-- HELPER SCRIPTS
+        ├── __init__.py       <-- Empty file (Required for imports)
+        ├── embedding.py      <-- HuggingFace Setup
+        ├── llm.py            <-- ChatOllama Setup
+        ├── pdf_loader.py     # Extract text from PDF
+        ├── text_splitter.py  # Split text into chunks
+        └── vector_store.py   # ChromaDB logic
 
-📖 Usage
-Start Ollama: Open a separate terminal and ensure Ollama is running (ollama serve).
 
-Open Browser: Go to http://127.0.0.1:8000/.
+❓ Troubleshooting
 
-Upload: Use the interface to upload a PDF document.
+Q: Import "rag_app.utils..." could not be resolved
 
-Ask: Type a question related to the PDF content in the input box.
+A: Ensure you have an empty __init__.py file inside the rag_app folder and the rag_app/utils folder.
 
-View Results: The system will retrieve relevant context and generate an answer.
+Q: The answers are too slow.
 
-📝 Notes & Troubleshooting
-Ollama Error: If you get a connection error, ensure Ollama is running on port 11434.
+A: Check that you are using llama3.2 in llm.py. If you are using llama3 (8B parameters), it will be significantly slower on a standard laptop CPU.
 
-FAISS Index: The vector store is saved locally in the faiss_index/ directory. If you want to reset the knowledge base, simply delete this folder and re-upload your PDF.
+Q: sqlite3.OperationalError regarding Chroma.
 
-Production: This project uses DEBUG=True and SQLite. For production, configure .env variables and switch to PostgreSQL.
+A: If you are on an older version of Python or Windows, you might need to install pysqlite3-binary. However, standard pip install chromadb usually handles this.
