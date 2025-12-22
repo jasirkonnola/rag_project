@@ -74,7 +74,9 @@ A sophisticated Django-based RAG (Retrieval-Augmented Generation) application th
     *   Click the **Trash icon** to instantly delete a document.
     *   Click **"Clear Conversation"** in the sidebar to reset your chat history.
 
--- 📂 Project Structure
+
+```bash
+📂 Project Structure
 
 my_project/                   <-- ROOT FOLDER (Open VS Code here)
 ├── manage.py                 <-- Django command tool
