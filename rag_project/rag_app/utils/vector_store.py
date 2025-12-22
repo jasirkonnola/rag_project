@@ -15,15 +15,13 @@ def get_vectorstore():
         persist_directory=DB_PATH
     )
 
-def create_vector_store(text_chunks: list[str], pdf_id: int):
-    """Adds chunks to the single vector store with metadata."""
+def create_vector_store(documents: list[Document], pdf_id: int):
+    """Adds pre-created documents to the vector store, attaching the PDF ID."""
     vectorstore = get_vectorstore()
     
-    # Create Document objects with metadata so we can filter later
-    documents = [
-        Document(page_content=chunk, metadata={"pdf_id": pdf_id})
-        for chunk in text_chunks
-    ]
+    # Inject pdf_id into each document's metadata
+    for doc in documents:
+        doc.metadata["pdf_id"] = pdf_id
     
     vectorstore.add_documents(documents)
 

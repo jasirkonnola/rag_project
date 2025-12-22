@@ -40,6 +40,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Allow iframes from the same site (fixing PDF viewer "refused to connect")
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 ROOT_URLCONF = 'rag_project.urls'
 
 TEMPLATES = [

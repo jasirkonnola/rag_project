@@ -1,0 +1,8 @@
+django
+langchain
+langchain-google-genai
+langchain-chroma
+chromadb
+google-generativeai
+pymupdf
+python-dotenv
