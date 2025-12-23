@@ -1,6 +1,6 @@
 # RAG PDF Assistant with Split-View
 
-![App Screenshot]https://github.com/jasirkonnola/rag_project/blob/main/rag_project/DocuChat.png
+![App Screenshot](https://github.com/jasirkonnola/rag_project/blob/main/rag_project/DocuChat.png)
 
 A sophisticated Django-based RAG (Retrieval-Augmented Generation) application that allows users to chat with their PDF documents. It features a modern **Gemini-style Split View** UI, where source documents are displayed side-by-side with the chat, automatically navigating to the exact page where the answer was found.
 
