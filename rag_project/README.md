@@ -74,7 +74,39 @@ A sophisticated Django-based RAG (Retrieval-Augmented Generation) application th
     *   Click the **Trash icon** to instantly delete a document.
     *   Click **"Clear Conversation"** in the sidebar to reset your chat history.
 
-## ⚙️ Configuration
 
-*   **API Keys**: Ensure your LLM API keys (e.g., `GOOGLE_API_KEY`) are set in your environment variables or `.env` file.
-*   **Security**: `settings.py` is configured with `X_FRAME_OPTIONS = 'SAMEORIGIN'` to ensure the PDF viewer works correctly on `localhost`.
+```bash
+📂 Project Structure
+
+my_project/                   <-- ROOT FOLDER (Open VS Code here)
+├── manage.py                 <-- Django command tool
+├── db.sqlite3                <-- Database file (created after migrate)
+├── chroma_db_data/           <-- (Auto-created folder for vector storage)
+│
+├── rag_project/              <-- PROJECT CONFIGURATION FOLDER
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py           <-- Add 'rag_app' to INSTALLED_APPS here
+│   ├── urls.py               <-- Include 'rag_app.urls' here
+│   └── wsgi.py
+│
+└── rag_app/                  <-- YOUR APP FOLDER
+    ├── __init__.py           <-- Empty file (Required)
+    ├── admin.py
+    ├── apps.py
+    ├── models.py             <-- Defines UploadedPDF model
+    ├── urls.py               <-- URL patterns for upload/chat
+    ├── views.py              <-- Main logic (Upload, Chat, Summarize)
+    ├── tests.py
+    │
+    ├── templates/            <-- HTML FILES
+    │   └── rag_app/
+    │       └── upload.html
+    │
+    └── utils/                <-- HELPER SCRIPTS
+        ├── __init__.py       <-- Empty file (Required for imports)
+        ├── embedding.py      <-- HuggingFace Setup
+        ├── llm.py            <-- ChatOllama Setup
+        ├── pdf_loader.py     # Extract text from PDF
+        ├── text_splitter.py  # Split text into chunks
+        └── vector_store.py   # ChromaDB logic
