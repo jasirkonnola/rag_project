@@ -5,7 +5,7 @@ import shutil
 from io import BytesIO
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.core.files.base import ContentFile
 
 # Requires: pip install pymupdf (fitz)
@@ -208,3 +208,32 @@ def delete_pdf(request, pdf_id):
     except Exception as e:
         print(f"Error deleting PDF: {e}")
     return redirect("upload_pdf")
+
+
+def download_transcript(request, pdf_id):
+    """
+    Generate and download a text transcript of the PDF.
+    """
+    pdf = get_object_or_404(UploadedPDF, id=pdf_id)
+    
+    try:
+        pages_data = extract_text_from_pdf(pdf.file.path)
+        full_text = f"Transcript for: {pdf.filename}\n"
+        full_text += f"Uploaded: {pdf.uploaded_at}\n"
+        full_text += "="*50 + "\n\n"
+        
+        for data in pages_data:
+            full_text += f"--- Page {data['page']} ---\n"
+            full_text += data['text'] + "\n\n"
+            
+        response = HttpResponse(full_text, content_type='text/plain')
+        response['Content-Disposition'] = f'attachment; filename="transcript_{pdf.filename}.txt"'
+        return response
+        
+    except Exception as e:
+        print(f"Error generating transcript: {e}")
+        return HttpResponse("Error generating transcript", status=500)
+
+
+def home(request):
+    return render(request, "rag_app/home.html")

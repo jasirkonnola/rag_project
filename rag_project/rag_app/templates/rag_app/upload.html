@@ -58,11 +58,20 @@
                         </div>
                     </div>
 
-                    <!-- Instant Delete (No Confirm) -->
-                    <a href="{% url 'delete_pdf' pdf.id %}"
-                        class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition-all">
-                        <i class="fa-solid fa-trash-can text-xs"></i>
-                    </a>
+                    <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <!-- Transcript Download -->
+                        <a href="{% url 'download_transcript' pdf.id %}"
+                            class="text-gray-300 hover:text-indigo-600 hover:bg-indigo-50 p-1.5 rounded transition-all"
+                            title="Download Transcript">
+                            <i class="fa-solid fa-file-alt text-xs"></i>
+                        </a>
+
+                        <!-- Instant Delete (No Confirm) -->
+                        <a href="{% url 'delete_pdf' pdf.id %}"
+                            class="text-gray-300 hover:text-red-600 hover:bg-red-50 p-1.5 rounded transition-all">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </a>
+                    </div>
                 </li>
                 {% empty %}
                 <li
@@ -89,10 +98,14 @@
             </div>
         </div>
 
-        <!-- Clear Chat Utility -->
-        <div class="pt-4 border-t border-gray-100">
+        <!-- Clear Chat & Download Utility -->
+        <div class="pt-4 border-t border-gray-100 flex flex-col gap-2">
+            <button onclick="downloadChat()"
+                class="text-[10px] text-gray-400 hover:text-indigo-600 flex items-center gap-2 transition">
+                <i class="fa-solid fa-file-export"></i> Download Chat PDF
+            </button>
             <button onclick="clearChat()"
-                class="text-[10px] text-gray-400 hover:text-gray-600 flex items-center gap-2 transition">
+                class="text-[10px] text-gray-400 hover:text-red-500 flex items-center gap-2 transition">
                 <i class="fa-solid fa-broom"></i> Clear Conversation
             </button>
         </div>
@@ -176,6 +189,11 @@
 
 </main>
 
+</main>
+
+<!-- html2pdf.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <script>
     const chatContainer = document.getElementById('chat-container');
     const questionInput = document.getElementById('question');
@@ -218,6 +236,31 @@
             // Note: welcomeMsg might have been overwritten, re-create if needed or just reload
             location.reload();
         }
+    }
+
+    function downloadChat() {
+        // Clone the chat container for PDF generation to avoid messing with live view
+        const element = document.createElement('div');
+        element.innerHTML = chatContainer.innerHTML;
+
+        // Remove loading bubbles or empty states if needed
+        // For now, we take it as-is.
+
+        // Apply some basic styling for the print version
+        element.style.padding = '20px';
+        element.style.fontFamily = 'sans-serif';
+
+        // Options for html2pdf
+        const opt = {
+            margin: 0.5,
+            filename: 'chat_history.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // New Promise-based usage:
+        html2pdf().set(opt).from(element).save();
     }
 
 
